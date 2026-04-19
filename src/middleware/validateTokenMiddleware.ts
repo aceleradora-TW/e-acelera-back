@@ -24,7 +24,7 @@ export async function validateTokenMiddleware(
 	try {
 		if (!email) {
 			return res
-				.status(STATUS_CODE.TOKEN_EXPIRED)
+				.status(STATUS_CODE.UNAUTHORIZED)
 				.json({ message: 'Token invalid' });
 		}
 
@@ -36,12 +36,17 @@ export async function validateTokenMiddleware(
 
 		if (!user) {
 			return res
-				.status(STATUS_CODE.NOT_FOUND)
-				.json({ message: 'User not found' });
+				.status(STATUS_CODE.UNAUTHORIZED)
+				.json({ message: 'Authentication failled' });
 		}
 
+		console.log('User found:', user);
+
 		// TODO: Propriedade role não deveria estar estatica no login, ao invés disso olhar na documentação do OAUTH como passar essa propriedade dependendo da conta.
-		req.user = { email, id: +user.id, role: Role.VIEWER };
+		req.user = { email: user.email, id: +user.id, role: user.role };
+
+		console.log('User attached to request:', req.user);
+
 		next();
 	} catch (_error) {
 		return res
