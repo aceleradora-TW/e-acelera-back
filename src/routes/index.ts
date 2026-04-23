@@ -62,6 +62,7 @@ router.get('/stackby/:endpoint', (req, res, next) =>
 	new StackbyController().getStackbyData(req, res, next),
 );
 
+
 router.use(validateTokenMiddleware);
 
 router.get('/status/:id/:idType', (req, res) =>
@@ -80,6 +81,7 @@ router.get('/progress/:id/:idType', (req, res) =>
 	new ProgressController().getProgressPercentageById(req, res),
 );
 
+// Middleware de autorização de role
 router.use(authorizeRoleMiddleware);
 
 router.post('/themes', async (req, res) => {
