@@ -7,28 +7,22 @@ export const authorizeRoleMiddleware = (
 	res: Response,
 	next: NextFunction,
 ) => {
-	try {
-		const user = req.user;
+	const user = req.user;
+	const allowedRoles: Role[] = [Role.ADMIN, Role.EDITOR];
 
-		const allowedRoles: Role[] = [Role.ADMIN, Role.EDITOR];
-
-		if (!user) {
+	if (!user) {
 		return res.status(STATUS_CODE.UNAUTHORIZED).json({
-				message: 'user not found',
-			});
-		}
-		
-		if (!allowedRoles.includes(user.role)) {
-			return res.status(STATUS_CODE.FORBIDDEN).json({
-				message: 'You do not have permission to perform this action',
-			});	
-		}
-
-		next();
-			
-	} catch (error) {
-		console.error('Error in authorizeRoleMiddleware:', error);
+			message: 'user not found',
+		});
 	}
-	
+
+	if (!allowedRoles.includes(user.role)) {
+		return res.status(STATUS_CODE.FORBIDDEN).json({
+			message: 'You do not have permission to perform this action',
+		});
+	}
+
+	next();
 };
+
 
