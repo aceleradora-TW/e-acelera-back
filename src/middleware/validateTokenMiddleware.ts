@@ -43,7 +43,7 @@ export async function validateTokenMiddleware(
 
 		
 
-		// TODO: Propriedade role não deveria estar estatica no login, ao invés disso olhar na documentação do OAUTH como passar essa propriedade dependendo da conta.
+		// TODO: A role agora vem do banco, mas ainda precisamos estudar como passar essa propriedade corretamente via OAUTH.
 		req.user = { email: user.email, id: +user.id, role: user.role };
 		
 		next();
