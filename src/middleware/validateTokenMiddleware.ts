@@ -12,7 +12,7 @@ export async function validateTokenMiddleware(
 	const tokenService = new TokenService();
 	const token = req.headers.authorization?.split(' ')[1];
 
-	console.log(token);
+	// Removido console.log(token) conforme sugestão de revisão para evitar log de tokens sensíveis em produção.
 
 	if (!token) {
 		return res
