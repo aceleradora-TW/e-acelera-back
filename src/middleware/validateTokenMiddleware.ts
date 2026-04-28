@@ -25,7 +25,7 @@ export async function validateTokenMiddleware(
 	try {
 		if (!email) {
 			return res
-				.status(STATUS_CODE.UNAUTHORIZED)
+				.status(STATUS_CODE.TOKEN_EXPIRED)
 				.json({ message: 'Token invalid' });
 		}
 
@@ -37,7 +37,7 @@ export async function validateTokenMiddleware(
 
 		if (!user) {
 			return res
-				.status(STATUS_CODE.UNAUTHORIZED)
+				.status(STATUS_CODE.NOT_FOUND)
 				.json({ message: 'Authentication failled' });
 		}
 
