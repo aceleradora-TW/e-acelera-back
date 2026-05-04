@@ -42,4 +42,4 @@ next-env.d.ts
 .vscode
 
 # docs gerados em investigacoes
-docs/progress-401-investigation.md
+docs/
