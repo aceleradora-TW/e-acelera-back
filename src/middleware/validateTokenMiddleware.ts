@@ -11,12 +11,6 @@ export async function validateTokenMiddleware(
 ) {
 	const tokenService = new TokenService();
 	const token = req.headers.authorization?.split(' ')[1];
-	const requestMeta = {
-		method: req.method,
-		path: req.originalUrl,
-		origin: req.headers.origin,
-		hasAuthorizationHeader: Boolean(req.headers.authorization),
-	};
 
 	if (!token) {
 		return res
