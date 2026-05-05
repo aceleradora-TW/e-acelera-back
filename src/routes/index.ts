@@ -38,14 +38,6 @@ router.get('/themes/:id', (req, res) => {
 	new ThemeController().getThemeById(req, res);
 });
 
-/*router.post('/topics', async (req, res) => {
-	new TopicController().createTopic(req, res);
-});
-
-router.patch('/topics/:id', (req, res) => {
-	new TopicController().updateTopic(req, res);
-});*/
-
 router.get('/topics', (req, res) => {
 	new TopicController().getAllTopics(req, res);
 });
