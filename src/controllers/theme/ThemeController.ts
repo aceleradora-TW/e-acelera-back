@@ -56,10 +56,10 @@ export class ThemeController {
         limit,
       );
       return res.status(STATUS_CODE.OK).json(result);
-    } catch (_error) {
+    } catch (error) {
       return res
         .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
-        .json({ message: "Error fetching themes", details: _error });
+        .json({ message: "Error fetching themes", details: error });
     }
   }
 
