@@ -78,17 +78,20 @@ export class ThemeController {
       }
       return res.status(STATUS_CODE.OK).json(theme);
     } catch (error) {
+      const errorResponse = {
+        message: "Error fetching theme",
+        details: error,
+      };
+
       if (
         Array.isArray(error) &&
         error.every((err) => err instanceof ValidationError)
       ) {
-        return res.status(STATUS_CODE.BAD_REQUEST).json({
-          message: error[0].constraints?.isNotEmpty || "Invalid Theme ID",
-        });
+        return res.status(STATUS_CODE.BAD_REQUEST).json(errorResponse);
       }
       return res
         .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
-        .json({ details: error, message: "Error fetching theme" });
+        .json(errorResponse);
     }
   }
 
@@ -106,19 +109,19 @@ export class ThemeController {
 
       return res.status(STATUS_CODE.OK).json(theme);
     } catch (error: any) {
+      const errorResponse = {
+        message: "Error updating theme",
+        details: error,
+      };
+
       if (
         Array.isArray(error) &&
         error.every((err) => err instanceof ValidationError)
       ) {
-        return res.status(STATUS_CODE.BAD_REQUEST).json({
-          message: "Invalid data for update",
-        });
+        return res.status(STATUS_CODE.BAD_REQUEST).json(errorResponse);
       }
 
-      return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
-        message: "Error updating theme",
-        details: error,
-      });
+      return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json(errorResponse);
     }
   }
 
