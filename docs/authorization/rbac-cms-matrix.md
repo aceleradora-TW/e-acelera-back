@@ -25,6 +25,8 @@ As ações consideradas neste card são:
 
 A ação de remover/excluir fica fora do escopo deste documento e deve ser tratada em um card futuro, se necessário.
 
+Para a entidade `users`, o foco deste card é apenas visualizar e editar campos da tabela, com acesso exclusivo da role `ADMIN`.
+
 ## Matriz RBAC
 
 ### Legenda
@@ -55,6 +57,14 @@ A ação de remover/excluir fica fora do escopo deste documento e deve ser trata
 | VIEWER | ALLOW | ALLOW | DENY | DENY |
 | EDITOR | ALLOW | ALLOW | ALLOW | ALLOW |
 | ADMIN | ALLOW | ALLOW | ALLOW | ALLOW |
+
+### users
+
+| Role | Visualizar | Editar |
+| --- | --- | --- |
+| VIEWER | DENY | DENY |
+| EDITOR | DENY | DENY |
+| ADMIN | ALLOW | ALLOW |
 
 ## Regras Gerais
 
