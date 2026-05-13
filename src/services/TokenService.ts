@@ -33,6 +33,7 @@ export class TokenService {
 			const keyUint8Array = new Uint8Array(key);
 
 			const { plaintext } = await jose.compactDecrypt(token, keyUint8Array);
+			
 			const decodedToken = JSON.parse(new TextDecoder().decode(plaintext));
 
 			if (!decodedToken) {
