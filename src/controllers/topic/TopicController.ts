@@ -20,7 +20,7 @@ export class TopicController {
 		const dto = plainToInstance(CreateTopicDTO, req.body, {
 			enableImplicitConversion: true,
 		});
-
+		
 		try {
 			await validateOrReject(dto);
 
@@ -28,21 +28,20 @@ export class TopicController {
 
 			return res.status(STATUS_CODE.CREATED).json(topic);
 		} catch (error: any) {
+			
 			if (
 				Array.isArray(error) &&
 				error.every((err) => err instanceof ValidationError)
 			) {
 				return res.status(STATUS_CODE.BAD_REQUEST).json({
-					message: error[0].constraints?.isNotEmpty || 'Invalid data',
+					message: error,
 				});
 			}
 
-			return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
-				message: 'Error creating topic',
-				details: error,
-			});
+			return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json(error);
 		}
 	}
+
 
 	async getAllTopics(req: Request, res: Response) {
 		try {
