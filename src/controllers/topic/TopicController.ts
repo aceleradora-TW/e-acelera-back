@@ -20,7 +20,7 @@ export class TopicController {
 		const dto = plainToInstance(CreateTopicDTO, req.body, {
 			enableImplicitConversion: true,
 		});
-		
+
 		try {
 			await validateOrReject(dto);
 
@@ -28,7 +28,7 @@ export class TopicController {
 
 			return res.status(STATUS_CODE.CREATED).json(topic);
 		} catch (error: any) {
-			
+
 			if (
 				Array.isArray(error) &&
 				error.every((err) => err instanceof ValidationError)
@@ -140,10 +140,12 @@ export class TopicController {
 		}
 	}
 
+
 	async deleteTopic(req: Request, res: Response) {
 		const id = req.params.id.trim();
 
 		try {
+
 			await this.topicService.deleteTopic(id);
 
 			return res
@@ -151,9 +153,10 @@ export class TopicController {
 				.json({ message: 'Topic deleted with success' });
 
 		} catch (error: any) {
+			
 			return res
 				.status(STATUS_CODE.INTERNAL_SERVER_ERROR)
-				.json({ message: 'Internal server error' });
+				.json({ message: 'Error deleting topic', details: error });
 		}
 	}
 }
