@@ -1,6 +1,7 @@
 import prisma from '../../../client.js';
 import { CreateExerciseDTO } from '../../dtos/CreateExercise.dto.js';
 import { UpdateExerciseDTO } from '../../dtos/UpdateExercise.dto.js';
+import { BadRequestError, NotFoundError } from '../../errors/HttpErrors.js';
 import { createPaginationMeta, pagination } from '../../utils/pagination.js';
 
 export class ExerciseService {
@@ -25,6 +26,15 @@ export class ExerciseService {
 	}
 
 	async createExercise(dto: CreateExerciseDTO) {
+
+		const topicExists = await prisma.topic.findUnique({
+			where: { id: dto.topicId },
+		});
+
+		if (dto.topicId && !topicExists) {
+			throw new NotFoundError('Topic not found');
+		}
+
 		const exercise = await prisma.exercise.create({
 			data: {
 				title: dto.title,
