@@ -130,28 +130,30 @@ export class TopicController {
 				error.every((err) => err instanceof ValidationError)
 			) {
 				return res.status(STATUS_CODE.BAD_REQUEST).json({
-					message: 'Invalid data for update',
+					message: error,
 				});
 			}
 
 			return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
-				message: 'Error updating topic',
-				details: error,
+				message: 'Internal server error',
 			});
 		}
 	}
 
 	async deleteTopic(req: Request, res: Response) {
 		const id = req.params.id.trim();
+
 		try {
 			await this.topicService.deleteTopic(id);
+
 			return res
 				.status(STATUS_CODE.OK)
 				.json({ message: 'Topic deleted with success' });
+
 		} catch (error: any) {
 			return res
 				.status(STATUS_CODE.INTERNAL_SERVER_ERROR)
-				.json({ message: 'Error deleting topic', details: error });
+				.json({ message: 'Internal server error' });
 		}
 	}
 }
