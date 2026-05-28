@@ -8,6 +8,7 @@ import { Flagsmith } from 'flagsmith-nodejs';
 import { ThemeController } from '../controllers/theme/ThemeController.js';
 import { TopicController } from '../controllers/topic/TopicController.js';
 import { ExerciseController } from '../controllers/exercise/ExerciseController.js';
+import { UserController } from '../controllers/user/UserController.js';
 
 if (!process.env.FLAGSMITH_SERVER_KEY) {
 	throw new Error(
@@ -62,8 +63,12 @@ router.get('/stackby/:endpoint', (req, res, next) =>
 	new StackbyController().getStackbyData(req, res, next),
 );
 
+router.get('/user/role', (req, res) => {
+	new UserController().getUserRole(req, res);
+});
 
 router.use(validateTokenMiddleware);
+
 
 router.get('/status/:id/:idType', (req, res) =>
 	new ProgressController().getTopicExercisesStatusProgress(req, res),
