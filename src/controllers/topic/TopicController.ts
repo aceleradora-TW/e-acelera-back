@@ -135,7 +135,7 @@ export class TopicController {
 			}
 
 			return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
-				message: 'Internal server error',
+				message: error,
 			});
 		}
 	}

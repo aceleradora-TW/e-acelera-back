@@ -104,7 +104,7 @@ export class ExerciseController {
 				error.every((err) => err instanceof ValidationError)
 			) {
 				return res.status(STATUS_CODE.BAD_REQUEST).json({
-					message: error[0].constraints?.isNotEmpty || "Invalid data",
+					message: error,
 				});
 			}
 
@@ -140,7 +140,7 @@ export class ExerciseController {
 				error.every((err) => err instanceof ValidationError)
 			) {
 				return res.status(STATUS_CODE.BAD_REQUEST).json({
-					message: "Invalid data for update",
+					message: error,
 				});
 			}
 
