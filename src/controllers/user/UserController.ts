@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import { UserService } from '../../services/UserService.js';
+import { NotFoundError } from '../../errors/HttpErrors.js';
 
 
 export class UserController {
@@ -16,13 +17,17 @@ export class UserController {
             return res.status(400).json({ message: 'Email header is required and must be a string' });
         }
 
-        const user = await this.userService.findUserByEmail(email);
+        try {
+            const user = await this.userService.findUserByEmail(email);
 
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(200).json({ role: user.role });
+        } catch (error) {
+            if (error instanceof NotFoundError) {
+                return res.status(404).json(error);
+            }
+
+            return res.status(500).json('Internal server error.')
         }
-
-        return res.status(200).json({ role: user.role });
     }
 }
 
