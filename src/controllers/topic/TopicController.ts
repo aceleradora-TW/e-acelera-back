@@ -22,7 +22,7 @@ export class TopicController {
 		});
 
 		try {
-			await validateOrReject(dto);
+			await validateOrReject(dto, {whitelist: true, forbidNonWhitelisted: true});
 
 			const topic = await this.topicService.createTopic(dto);
 
@@ -119,7 +119,10 @@ export class TopicController {
 		});
 
 		try {
-			await validateOrReject(dto);
+			await validateOrReject(dto, {
+				whitelist: true,
+				forbidNonWhitelisted: true
+			});
 
 			const topic = await this.topicService.updateTopic(id, dto);
 

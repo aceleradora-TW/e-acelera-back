@@ -92,7 +92,10 @@ export class ExerciseController {
 		});
 
 		try {
-			await validateOrReject(dto);
+			await validateOrReject(dto, {
+				whitelist: true,
+				forbidNonWhitelisted: true
+			});
 
 			const exercise = await this.exerciseService.createExercise(dto);
 
@@ -131,7 +134,10 @@ export class ExerciseController {
 		});
 
 		try {
-			await validateOrReject(dto);
+			await validateOrReject(dto, {
+				whitelist: true,
+				forbidNonWhitelisted: true
+			});
 
 			const exercise = await this.exerciseService.updateExercise(id, dto);
 
