@@ -109,8 +109,10 @@ export class ExerciseController {
 			}
 
 			if (error instanceof NotFoundError) {
-				return res.status(error.statusCode).json({
-					message: error.message,
+				const message = 'Tópico inválido: não existe esse tópico';
+				return res.status(STATUS_CODE.BAD_REQUEST).json({
+					message,
+					error: message,
 				});
 			}
 
