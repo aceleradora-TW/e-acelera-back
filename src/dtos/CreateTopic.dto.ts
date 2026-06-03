@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 
 export class CreateTopicDTO {
 	@IsString()
@@ -15,6 +15,12 @@ export class CreateTopicDTO {
 	references!: string;
 	
 	@IsString()
-	@IsOptional()
-	themeId?: string;
+	@IsNotEmpty()
+	themeId!: string;
+
+	@IsNumber()
+	sequence!: number;
+
+	@IsString()
+	videoUrl!: string;
 }
