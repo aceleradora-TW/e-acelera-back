@@ -60,19 +60,15 @@ export class ThemeService {
       throw new Error('Theme not found');
     }
 
-   const theme = await prisma.theme.update({
-  where: { id },
-  data: {
-    title: dto.title,
-    description: dto.description,
-    shortDescription: dto.shortDescription,
-    image: dto.image,
-    alt: dto.alt,
-    category: dto.category,
-    sequence: dto.sequence,
-    isActive: dto.isActive,
-  },
-});
+    const theme = await prisma.theme.update({
+      where: { id },
+      data: {
+        title: dto.title,
+        description: dto.description,
+        shortDescription: dto.shortDescription,
+      },
+    });
+
     return theme;
   }
 

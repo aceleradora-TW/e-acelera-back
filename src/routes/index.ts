@@ -30,14 +30,6 @@ router.post('/login', (req, res) =>
 	new LoginController().registerUser(req, res),
 );
 
-router.post('/themes', async (req, res) => {
-	new ThemeController().createTheme(req, res);
-});
-
-router.patch('/themes/:id', (req, res) => {
-	new ThemeController().updateTheme(req, res);
-});
-
 router.get('/themes', (req, res) => {
 	new ThemeController().getThemes(req, res);
 });
@@ -46,13 +38,13 @@ router.get('/themes/:id', (req, res) => {
 	new ThemeController().getThemeById(req, res);
 });
 
-router.post('/topics', async (req, res) => {
+/*router.post('/topics', async (req, res) => {
 	new TopicController().createTopic(req, res);
 });
 
 router.patch('/topics/:id', (req, res) => {
 	new TopicController().updateTopic(req, res);
-});
+});*/
 
 router.get('/topics', (req, res) => {
 	new TopicController().getAllTopics(req, res);
@@ -62,10 +54,6 @@ router.get('/topics/:id', (req, res) => {
 	new TopicController().getTopicById(req, res);
 });
 
-router.delete('/topics/:id', (req, res) => {
-	new TopicController().deleteTopic(req, res);
-});
-
 router.get('/exercises', (req, res) => {
 	new ExerciseController().getAllExercises(req, res);
 });
@@ -73,6 +61,7 @@ router.get('/exercises', (req, res) => {
 router.get('/stackby/:endpoint', (req, res, next) =>
 	new StackbyController().getStackbyData(req, res, next),
 );
+
 
 router.use(validateTokenMiddleware);
 
@@ -92,6 +81,7 @@ router.get('/progress/:id/:idType', (req, res) =>
 	new ProgressController().getProgressPercentageById(req, res),
 );
 
+// Middleware de autorização de role
 router.use(authorizeRoleMiddleware);
 
 router.post('/themes', async (req, res) => {
@@ -101,6 +91,19 @@ router.post('/themes', async (req, res) => {
 router.patch('/themes/:id', (req, res) => {
 	new ThemeController().updateTheme(req, res);
 });
+
+router.post('/topics', async (req, res) => {
+	new TopicController().createTopic(req, res);
+});
+
+router.patch('/topics/:id', (req, res) => {
+	new TopicController().updateTopic(req, res);
+});
+
+router.delete('/topics/:id', (req, res) => {
+	new TopicController().deleteTopic(req, res);
+});
+
 
 router.post('/exercises', (req, res) => {
 	new ExerciseController().createExercise(req, res);
@@ -113,6 +116,8 @@ router.patch('/exercises/:id', (req, res) => {
 router.delete('/exercises/:id', (req, res) => {
 	new ExerciseController().deleteExercise(req, res);
 });
+
+
 /*
 * to-do:wip
 router.delete("/themes/:id", (req, res) => {

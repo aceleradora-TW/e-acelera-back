@@ -1,5 +1,28 @@
 import { redis } from "../lib/redis.js";
 import { CACHE_TTL, IS_CACHE_ENABLED } from "../utils/constants.js";
+import { safeJsonParse } from "../utils/safe-json.js";
+
+function parseCachedValue<T>(cached: unknown): T | null {
+	if (!cached) {
+		return null;
+	}
+
+	if (typeof cached === "object") {
+		return cached as T;
+	}
+
+	if (typeof cached !== "string") {
+		return null;
+	}
+
+	const parsed = safeJsonParse<T>(cached);
+
+	if (parsed === null) {
+		console.warn("Ignoring malformed cache entry");
+	}
+
+	return parsed;
+}
 
 export async function cacheOrFetch<T>(
 	key: string,
@@ -10,10 +33,11 @@ export async function cacheOrFetch<T>(
 			return await fetchFunction();
 		}
 
-		const cached: string | null = await redis!.get(key);
+		const cached: unknown = await redis!.get(key);
+		const parsedCache = parseCachedValue<T>(cached);
 
-		if (cached) {
-			return cached;
+		if (parsedCache !== null) {
+			return parsedCache;
 		}
 
 		const data = await fetchFunction();
