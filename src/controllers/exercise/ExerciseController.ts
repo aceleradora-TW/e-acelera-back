@@ -1,13 +1,14 @@
-import { plainToInstance } from 'class-transformer';
-import { ValidationError, validateOrReject } from 'class-validator';
-import type { Request, Response } from 'express';
-import { GetExerciseByIdDTO } from '../../dtos/GetExerciseById.dto.js';
-import { GetExercisesByTopicIdDTO } from '../../dtos/GetExercisesByTopicId.dto.js';
-import { CreateExerciseDTO } from '../../dtos/CreateExercise.dto.js';
-import { UpdateExerciseDTO } from '../../dtos/UpdateExercise.dto.js';
-import { ExerciseService } from '../../services/exercise/ExerciseService.js';
-import { STATUS_CODE } from '../../utils/constants.js';
-import { getPaginationParams } from '../../utils/pagination.js';
+import { plainToInstance } from "class-transformer";
+import { ValidationError, validateOrReject } from "class-validator";
+import type { Request, Response } from "express";
+import { GetExerciseByIdDTO } from "../../dtos/GetExerciseById.dto.js";
+import { GetExercisesByTopicIdDTO } from "../../dtos/GetExercisesByTopicId.dto.js";
+import { CreateExerciseDTO } from "../../dtos/CreateExercise.dto.js";
+import { UpdateExerciseDTO } from "../../dtos/UpdateExercise.dto.js";
+import { ExerciseService } from "../../services/exercise/ExerciseService.js";
+import { STATUS_CODE } from "../../utils/constants.js";
+import { getPaginationParams } from "../../utils/pagination.js";
+import { NotFoundError } from "../../errors/HttpErrors.js";
 
 export class ExerciseController {
 	private exerciseService: ExerciseService;
@@ -24,7 +25,7 @@ export class ExerciseController {
 		} catch (_error) {
 			return res
 				.status(STATUS_CODE.INTERNAL_SERVER_ERROR)
-				.json({ message: 'Error fetching exercises' });
+				.json({ message: "Error fetching exercises" });
 		}
 	}
 
@@ -40,7 +41,7 @@ export class ExerciseController {
 			if (!exercise) {
 				return res
 					.status(STATUS_CODE.NOT_FOUND)
-					.json({ message: 'Exercise not found' });
+					.json({ message: "Exercise not found" });
 			}
 
 			return res.status(STATUS_CODE.OK).json(exercise);
@@ -51,11 +52,11 @@ export class ExerciseController {
 			) {
 				return res
 					.status(STATUS_CODE.BAD_REQUEST)
-					.json({ message: 'Invalid Exercise ID' });
+					.json({ message: "Invalid Exercise ID" });
 			}
 			return res
 				.status(STATUS_CODE.INTERNAL_SERVER_ERROR)
-				.json({ message: 'Error fetching exercise' });
+				.json({ message: "Error fetching exercise" });
 		}
 	}
 
@@ -77,11 +78,11 @@ export class ExerciseController {
 			) {
 				return res
 					.status(STATUS_CODE.BAD_REQUEST)
-					.json({ message: 'Invalid Topic ID' });
+					.json({ message: "Invalid Topic ID" });
 			}
 			return res
 				.status(STATUS_CODE.INTERNAL_SERVER_ERROR)
-				.json({ message: 'Error fetching exercises by topic ID' });
+				.json({ message: "Error fetching exercises by topic ID" });
 		}
 	}
 
@@ -91,23 +92,35 @@ export class ExerciseController {
 		});
 
 		try {
-			await validateOrReject(dto);
+			await validateOrReject(dto, {
+				whitelist: true,
+				forbidNonWhitelisted: true
+			});
 
 			const exercise = await this.exerciseService.createExercise(dto);
 
 			return res.status(STATUS_CODE.CREATED).json(exercise);
 		} catch (error: any) {
+
 			if (
 				Array.isArray(error) &&
 				error.every((err) => err instanceof ValidationError)
 			) {
 				return res.status(STATUS_CODE.BAD_REQUEST).json({
-					message: error[0].constraints?.isNotEmpty || 'Invalid data',
+					message: error,
+				});
+			}
+
+			if (error instanceof NotFoundError) {
+				const message = 'Tópico inválido: não existe esse tópico';
+				return res.status(STATUS_CODE.BAD_REQUEST).json({
+					message,
+					error: message,
 				});
 			}
 
 			return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
-				message: 'Error creating exercise',
+				message: "Error creating exercise",
 				details: error,
 			});
 		}
@@ -121,7 +134,10 @@ export class ExerciseController {
 		});
 
 		try {
-			await validateOrReject(dto);
+			await validateOrReject(dto, {
+				whitelist: true,
+				forbidNonWhitelisted: true
+			});
 
 			const exercise = await this.exerciseService.updateExercise(id, dto);
 
@@ -132,12 +148,12 @@ export class ExerciseController {
 				error.every((err) => err instanceof ValidationError)
 			) {
 				return res.status(STATUS_CODE.BAD_REQUEST).json({
-					message: 'Invalid data for update',
+					message: error,
 				});
 			}
 
 			return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
-				message: 'Error updating exercise',
+				message: "Error updating exercise",
 				details: error,
 			});
 		}
@@ -152,7 +168,7 @@ export class ExerciseController {
 		} catch (error: any) {
 			return res
 				.status(STATUS_CODE.INTERNAL_SERVER_ERROR)
-				.json({ message: 'Error deleting exercise', details: error });
+				.json({ message: "Error deleting exercise", details: error });
 		}
 	}
 }
