@@ -28,18 +28,19 @@ export class ThemeController {
 
       return res.status(STATUS_CODE.CREATED).json(theme);
     } catch (error: any) {
-      const errorResponse = {
-        message: "Error creating theme",
-        details: error,
-      };
       if (
         Array.isArray(error) &&
         error.every((err) => err instanceof ValidationError)
       ) {
-        return res.status(STATUS_CODE.BAD_REQUEST).json(errorResponse);
+        return res.status(STATUS_CODE.BAD_REQUEST).json({
+          message: error[0].constraints?.isNotEmpty || "Invalid data",
+        });
       }
 
-      return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json(errorResponse);
+      return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
+        message: "Error creating theme",
+        details: error,
+      });
     }
   }
 
@@ -47,19 +48,18 @@ export class ThemeController {
     const dto = plainToInstance(GetThemeByCategoryDTO, req.query, {
       enableImplicitConversion: true,
     });
+
     try {
       await validateOrReject(dto);
+
       const { page, limit } = getPaginationParams(req);
-      const result = await this.themeService.getThemes(
-        dto.category,
-        page,
-        limit,
-      );
+      const result = await this.themeService.getThemes(dto.category, page, limit);
+
       return res.status(STATUS_CODE.OK).json(result);
-    } catch (error) {
+    } catch (_error) {
       return res
         .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
-        .json({ message: "Error fetching themes", details: error });
+        .json({ message: "Error fetching themes", details: _error });
     }
   }
 
@@ -67,8 +67,10 @@ export class ThemeController {
     const dto = plainToInstance(GetThemeByIdDTO, req.params, {
       enableImplicitConversion: true,
     });
+
     try {
       await validateOrReject(dto);
+
       const theme = await this.themeService.getThemeById(dto.id);
 
       if (!theme) {
@@ -76,22 +78,21 @@ export class ThemeController {
           .status(STATUS_CODE.NOT_FOUND)
           .json({ message: "Theme not found" });
       }
+
       return res.status(STATUS_CODE.OK).json(theme);
     } catch (error) {
-      const errorResponse = {
-        message: "Error fetching theme",
-        details: error,
-      };
-
       if (
         Array.isArray(error) &&
         error.every((err) => err instanceof ValidationError)
       ) {
-        return res.status(STATUS_CODE.BAD_REQUEST).json(errorResponse);
+        return res.status(STATUS_CODE.BAD_REQUEST).json({
+          message: error[0].constraints?.isNotEmpty || "Invalid Theme ID",
+        });
       }
+
       return res
         .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
-        .json(errorResponse);
+        .json({ details: error, message: "Error fetching theme" });
     }
   }
 
@@ -109,19 +110,19 @@ export class ThemeController {
 
       return res.status(STATUS_CODE.OK).json(theme);
     } catch (error: any) {
-      const errorResponse = {
-        message: "Error updating theme",
-        details: error,
-      };
-
       if (
         Array.isArray(error) &&
         error.every((err) => err instanceof ValidationError)
       ) {
-        return res.status(STATUS_CODE.BAD_REQUEST).json(errorResponse);
+        return res.status(STATUS_CODE.BAD_REQUEST).json({
+          message: "Invalid data for update",
+        });
       }
 
-      return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json(errorResponse);
+      return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
+        message: "Error updating theme",
+        details: error,
+      });
     }
   }
 
@@ -130,6 +131,7 @@ export class ThemeController {
 
     try {
       const theme = await this.themeService.deleteTheme(id);
+
       return res.status(STATUS_CODE.OK).json(theme);
     } catch (error: any) {
       return res
