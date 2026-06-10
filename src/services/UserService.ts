@@ -1,13 +1,12 @@
 import prisma from "../../client.js";
+import { NotFoundError } from "../errors/HttpErrors.js";
 
 export class UserService {
-	async findUserByEmail(email: string) {
-		try {
-			const user = await prisma.user.findUnique({ where: { email } });
-			if (!user) throw new Error("User not found.");
-			return user;
-		} catch (error) {
-			throw new Error("Error fetching user from database");
-		}
-	}
+    async findUserByEmail(email: string) {
+            const user = await prisma.user.findUnique({ where: { email } });
+
+            if (!user) throw new NotFoundError("User not found.");
+
+            return user;
+    }
 }
