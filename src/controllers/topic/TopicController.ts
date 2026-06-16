@@ -8,6 +8,7 @@ import { STATUS_CODE } from '../../utils/constants.js';
 import { CreateTopicDTO } from '../../dtos/CreateTopic.dto.js';
 import { UpdateTopicDTO } from '../../dtos/UpdateTopic.dto.js';
 import { getPaginationParams } from '../../utils/pagination.js';
+import { NotFoundError } from "../../errors/HttpErrors.js";
 
 export class TopicController {
 	private topicService: TopicService;
@@ -22,7 +23,7 @@ export class TopicController {
 		});
 
 		try {
-			await validateOrReject(dto, {whitelist: true, forbidNonWhitelisted: true});
+			await validateOrReject(dto, { whitelist: true, forbidNonWhitelisted: true });
 
 			const topic = await this.topicService.createTopic(dto);
 
@@ -35,6 +36,14 @@ export class TopicController {
 			) {
 				return res.status(STATUS_CODE.BAD_REQUEST).json({
 					message: error,
+				});
+			}
+
+			if (error instanceof NotFoundError) {
+				const message = 'Tema inválido: não existe esse tema';
+				return res.status(STATUS_CODE.BAD_REQUEST).json({
+					message,
+					error: message,
 				});
 			}
 
@@ -156,7 +165,7 @@ export class TopicController {
 				.json({ message: 'Topic deleted with success' });
 
 		} catch (error: any) {
-			
+
 			return res
 				.status(STATUS_CODE.INTERNAL_SERVER_ERROR)
 				.json({ message: 'Error deleting topic', details: error });
