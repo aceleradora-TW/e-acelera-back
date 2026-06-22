@@ -59,6 +59,10 @@ router.get('/exercises', (req, res) => {
 	new ExerciseController().getAllExercises(req, res);
 });
 
+router.get('/exercises/:id', (req, res) => {
+  new ExerciseController().getExerciseById(req, res);
+});
+
 router.get('/stackby/:endpoint', (req, res, next) =>
 	new StackbyController().getStackbyData(req, res, next),
 );
