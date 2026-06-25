@@ -8,6 +8,7 @@ import { STATUS_CODE } from '../../utils/constants.js';
 import { CreateTopicDTO } from '../../dtos/CreateTopic.dto.js';
 import { UpdateTopicDTO } from '../../dtos/UpdateTopic.dto.js';
 import { getPaginationParams } from '../../utils/pagination.js';
+import { NotFoundError } from "../../errors/HttpErrors.js";
 
 export class TopicController {
 	private topicService: TopicService;
@@ -22,27 +23,34 @@ export class TopicController {
 		});
 
 		try {
-			await validateOrReject(dto);
+			await validateOrReject(dto, { whitelist: true, forbidNonWhitelisted: true });
 
 			const topic = await this.topicService.createTopic(dto);
 
 			return res.status(STATUS_CODE.CREATED).json(topic);
 		} catch (error: any) {
+
 			if (
 				Array.isArray(error) &&
 				error.every((err) => err instanceof ValidationError)
 			) {
 				return res.status(STATUS_CODE.BAD_REQUEST).json({
-					message: error[0].constraints?.isNotEmpty || 'Invalid data',
+					message: error,
 				});
 			}
 
-			return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
-				message: 'Error creating topic',
-				details: error,
-			});
+			if (error instanceof NotFoundError) {
+				const message = 'Tema inválido: não existe esse tema';
+				return res.status(STATUS_CODE.BAD_REQUEST).json({
+					message,
+					error: message,
+				});
+			}
+
+			return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json(error);
 		}
 	}
+
 
 	async getAllTopics(req: Request, res: Response) {
 		try {
@@ -120,7 +128,10 @@ export class TopicController {
 		});
 
 		try {
-			await validateOrReject(dto);
+			await validateOrReject(dto, {
+				whitelist: true,
+				forbidNonWhitelisted: true
+			});
 
 			const topic = await this.topicService.updateTopic(id, dto);
 
@@ -131,25 +142,30 @@ export class TopicController {
 				error.every((err) => err instanceof ValidationError)
 			) {
 				return res.status(STATUS_CODE.BAD_REQUEST).json({
-					message: 'Invalid data for update',
+					message: error,
 				});
 			}
 
 			return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
-				message: 'Error updating topic',
-				details: error,
+				message: error,
 			});
 		}
 	}
 
+
 	async deleteTopic(req: Request, res: Response) {
 		const id = req.params.id.trim();
+
 		try {
+
 			await this.topicService.deleteTopic(id);
+
 			return res
 				.status(STATUS_CODE.OK)
 				.json({ message: 'Topic deleted with success' });
+
 		} catch (error: any) {
+
 			return res
 				.status(STATUS_CODE.INTERNAL_SERVER_ERROR)
 				.json({ message: 'Error deleting topic', details: error });

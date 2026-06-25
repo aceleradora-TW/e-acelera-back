@@ -2,9 +2,18 @@ import prisma from '../../../client.js';
 import { CreateTopicDTO } from '../../dtos/CreateTopic.dto.js';
 import { UpdateTopicDTO } from '../../dtos/UpdateTopic.dto.js';
 import { createPaginationMeta, pagination } from '../../utils/pagination.js';
+import { NotFoundError } from '../../errors/HttpErrors.js';
 
 export class TopicService {
 	async createTopic(dto: CreateTopicDTO) {
+
+		const themeExists = await prisma.theme.findUnique({
+			where: { id: dto.themeId },
+		});
+
+		if (dto.themeId && !themeExists) {
+			throw new NotFoundError('Theme not found');
+		}
 		const topic = await prisma.topic.create({
 			data: {
 				title: dto.title,
