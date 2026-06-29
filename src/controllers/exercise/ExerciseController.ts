@@ -8,7 +8,7 @@ import { UpdateExerciseDTO } from "../../dtos/UpdateExercise.dto.js";
 import { ExerciseService } from "../../services/exercise/ExerciseService.js";
 import { STATUS_CODE } from "../../utils/constants.js";
 import { getPaginationParams } from "../../utils/pagination.js";
-import { NotFoundError } from "../../errors/HttpErrors.js";
+import { BadRequestError, NotFoundError } from "../../errors/HttpErrors.js";
 
 export class ExerciseController {
 	private exerciseService: ExerciseService;
@@ -108,6 +108,13 @@ export class ExerciseController {
 			) {
 				return res.status(STATUS_CODE.BAD_REQUEST).json({
 					message: error,
+				});
+			}
+
+			if (error instanceof BadRequestError) {
+				return res.status(STATUS_CODE.BAD_REQUEST).json({
+					message: error.message,
+					error: error.message,
 				});
 			}
 
