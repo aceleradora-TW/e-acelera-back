@@ -18,6 +18,6 @@ export class CreateExerciseDTO {
   sequence?: number;
 
   @IsOptional()
-  @IsString()
+  @IsNotEmpty({ message: "Topic ID is required" })
   topicId?: string;
 }
