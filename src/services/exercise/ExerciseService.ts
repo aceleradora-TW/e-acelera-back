@@ -27,6 +27,10 @@ export class ExerciseService {
 
 	async createExercise(dto: CreateExerciseDTO) {
 
+		if (!dto.topicId) {
+			throw new BadRequestError("Tópico obrigatório");
+		}
+
 		const topicExists = await prisma.topic.findUnique({
 			where: { id: dto.topicId },
 		});
