@@ -19,7 +19,8 @@ export class ThemeService {
 			skip,
 			take,
 		});
-		
+
+themes.forEach(t => console.log(t.title, t.sequence));
 		return {
 			data: themes,
 			meta: createPaginationMeta(total, page, take),
