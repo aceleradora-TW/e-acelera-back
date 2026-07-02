@@ -11,7 +11,11 @@ export class ExerciseService {
 		const total = await prisma.exercise.count();
 		const exercises = await prisma.exercise.findMany({
 			include: {
-				topic: true,
+				topic: {
+					include: {
+						theme: true,
+					},
+				},
 			},
 			orderBy: {
 				sequence: 'asc',
@@ -19,6 +23,7 @@ export class ExerciseService {
 			skip,
 			take,
 		});
+
 		return {
 			data: exercises,
 			meta: createPaginationMeta(total, page, take),
@@ -48,7 +53,13 @@ export class ExerciseService {
 				topicId: dto.topicId || null,
 				isActive: true,
 			},
-			include: { topic: true },
+			include: {
+				topic: {
+					include: {
+						theme: true,
+					},
+				},
+			},
 		});
 
 		return exercise;
@@ -56,6 +67,7 @@ export class ExerciseService {
 
 	async updateExercise(id: string, dto: UpdateExerciseDTO) {
 		const existing = await prisma.exercise.findUnique({ where: { id } });
+
 		if (!existing) {
 			throw new Error('Exercise not found');
 		}
@@ -65,7 +77,13 @@ export class ExerciseService {
 			data: {
 				...dto,
 			},
-			include: { topic: true },
+			include: {
+				topic: {
+					include: {
+						theme: true,
+					},
+				},
+			},
 		});
 
 		return updated;
@@ -79,7 +97,11 @@ export class ExerciseService {
 	async getExerciseById(id: string) {
 		return await prisma.exercise.findUnique({
 			include: {
-				topic: true,
+				topic: {
+					include: {
+						theme: true,
+					},
+				},
 			},
 			where: { id },
 		});
