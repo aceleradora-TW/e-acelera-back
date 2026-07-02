@@ -7,8 +7,8 @@ import { TopicService } from '../../services/topic/TopicService.js';
 import { STATUS_CODE } from '../../utils/constants.js';
 import { CreateTopicDTO } from '../../dtos/CreateTopic.dto.js';
 import { UpdateTopicDTO } from '../../dtos/UpdateTopic.dto.js';
-import { getPaginationParams } from '../../utils/pagination.js';
-import { NotFoundError } from "../../errors/HttpErrors.js";
+import { getPaginationParams, getSortParams } from '../../utils/pagination.js';
+import { NotFoundError } from '../../errors/HttpErrors.js';
 
 export class TopicController {
 	private topicService: TopicService;
@@ -55,7 +55,8 @@ export class TopicController {
 	async getAllTopics(req: Request, res: Response) {
 		try {
 			const { page, limit } = getPaginationParams(req);
-			const topics = await this.topicService.getAllTopics(page, limit);
+			const { sortBy, sortOrder } = getSortParams(req);
+			const topics = await this.topicService.getAllTopics(page, limit, sortBy, sortOrder);
 			return res.status(STATUS_CODE.OK).json(topics);
 		} catch (_error) {
 			return res

@@ -24,5 +24,15 @@ export function getPaginationParams (req: Request) {
 return { page, limit };
 }
 
+const ALLOWED_SORT_FIELDS = ['id', 'title', 'shortDescription'];
+const ALLOWED_SORT_ORDERS = ['asc', 'desc'];
 
+export function getSortParams(req: Request) {
+    const sortByRaw = (req.query.sortBy as string) || '';
+    const sortOrderRaw = (req.query.sortOrder as string) || 'asc';
 
+    const sortBy = ALLOWED_SORT_FIELDS.includes(sortByRaw) ? sortByRaw : undefined;
+    const sortOrder = ALLOWED_SORT_ORDERS.includes(sortOrderRaw) ? sortOrderRaw as 'asc' | 'desc' : 'asc';
+
+    return { sortBy, sortOrder };
+}

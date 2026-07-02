@@ -27,8 +27,17 @@ export class TopicService {
 		return topic;
 	}
 
-	async getAllTopics(page: number = 1, limit: number = 10) {
+	async getAllTopics(page: number = 1, limit: number = 10, sortBy?: string, sortOrder: 'asc' | 'desc' = 'asc') {
 		const { skip, take } = pagination(page, limit);
+
+		const fieldMapping: Record<string, any> = {
+			id: { id: sortOrder },
+			title: { title: sortOrder },
+			shortDescription: { shortDescription: sortOrder },
+			themeId: { themeId: sortOrder },
+		};
+
+		const orderBy = sortBy && fieldMapping[sortBy] ? fieldMapping[sortBy] : undefined;
 
 		const total = await prisma.topic.count();
 		const topics = await prisma.topic.findMany({
@@ -39,6 +48,7 @@ export class TopicService {
 			},
 			skip,
 			take,
+			...(orderBy && { orderBy }),
 		});
 
 		return {
